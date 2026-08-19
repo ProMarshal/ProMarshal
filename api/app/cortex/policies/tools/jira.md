@@ -1,0 +1,60 @@
+Tool policy: Jira family
+- Validate work item identifiers and project scope before Jira mutation calls.
+- Route action intents to exact tools:
+  - create work item -> `jira_create_work_item`
+  - update work item status -> `jira_update_status`
+  - add work item comment -> `jira_add_comment`
+  - update work item description -> `jira_update_description`
+  - update work item due date -> `jira_update_due_date`
+  - clear work item due date -> `jira_clear_due_date`
+  - update work item start date -> `jira_update_start_date`
+  - clear work item start date -> `jira_clear_start_date`
+  - assign/reassign work item -> `jira_assign_work_item`
+  - list/count/search work items -> `jira_search_work_items`
+  - fetch one work item details -> `jira_get_work_item_details`
+- Treat description updates and comment additions as distinct operations:
+  - persistent issue content change -> `jira_update_description`
+  - discussion/update note -> `jira_add_comment`
+- For assignee fields in create/assign flows, you may pass email or member display name.
+- Treat teammate references from normalized context (mentions/names) as explicit assignee intent only when match is unambiguous.
+- If assignee name matching is ambiguous, request assignee email before executing mutation.
+- For work item creation, assignee is optional; if user did not specify one, create the work item unassigned and do not infer or fabricate an assignee.
+- For single create-work-item intent, execute exactly one `jira_create_work_item` call; do not retry by guessing alternative assignees.
+- Sprint handling:
+  - If user gives explicit instruction (e.g., keep in backlog, add to sprint), honor it.
+  - If user gives no sprint instruction, follow project auto policy.
+  - For explicit control in write tools, use `sprint_directive` with values `active_sprint` or `backlog`.
+- If a message has greeting + request, treat it as actionable and execute the request path.
+- For create/assign/status/comment/description operations, require explicit target values.
+- For follow-up write requests, ground target scope from one of: current user message, structured session snapshot, or a fresh `jira_search_work_items` read.
+- If follow-up write scope is not grounded, ask a concise clarification before any mutation.
+- For `jira_search_work_items`, prefer canonical assignee filters:
+  - `assignee_mode=any` for no assignee filter
+  - `assignee_mode=unassigned` for tasks with no assignee
+  - `assignee_mode=specific` with `assignee_value=<member-email>`
+  - `assignee_mode=me` to filter to the caller's mapped member email
+- For work-item-read prompts (open/pending/unassigned/list/count), call `jira_search_work_items` and ground the answer in tool output.
+- For field/detail follow-up read prompts (for example creator/reporter, description, link/url), answer from read data fields when available; do not fallback to generic list formatting.
+- If a requested detail field is absent in read output, explicitly say it is not available in current data.
+- For due-date prompts, use canonical `due_date_mode`:
+  - `missing` for "without/no due date"
+  - `present` for "with/has due date"
+  - `any` when due-date scope is not requested
+- Work-item scope policy for `jira_search_work_items`:
+  - Generic scope (`list/show work items`, `list/show items`, `list/show tasks`, `list/show tickets`, `list/show requests`) -> include assigned + unassigned
+  - Generic all scope (`list/show all work items`, `list/show all items`, `list/show all tasks`, `list/show all tickets`, `list/show all requests`) -> include assigned + unassigned
+  - Typed scope (`list stories`, `list epics`, `list bugs`, `list defects`, `list incidents`, `list features`, `list service requests`, and singular/plural variants) -> apply explicit `provider_types` filter
+  - Typed unassigned scope (`list unassigned bugs`, `list unassigned stories`, etc.) -> unassigned with explicit `provider_types` filter
+  - Generic nouns (`tasks`, `items`, `tickets`, `issues`, `requests`, `cards`, `backlog items`) must remain cross-type by default unless user explicitly asks for a specific issue type.
+- Work-item lifecycle visibility rule:
+  - If user asks to list/show/all items without explicit closed/done wording, default to non-closed items.
+  - Return closed/done items only when user explicitly asks for closed/completed/resolved/done items.
+- In list responses, state the applied scope in one line (for example: "Listed assigned items only" or "Listed all items including unassigned").
+- For non-idempotent actions, include `operation_id` when possible; runtime may derive one if missing.
+- Do not claim validation or integration errors unless a Jira/Brain tool result explicitly returned that error.
+- Treat Jira as source of truth for write confirmation.
+- If Jira returns ambiguous failure, report uncertainty rather than claiming success.
+- Member behavior target:
+  - Allow status updates and comments on the member's own work items.
+  - Work item creation, reassignment, and deletion should require approval.
+- If policy enforcement for a requested action is unclear at runtime, request approval before execution.

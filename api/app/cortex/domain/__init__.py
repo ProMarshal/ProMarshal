@@ -1,0 +1,2 @@
+"""Shared Cortex domain contracts."""
+

@@ -1,0 +1,97 @@
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# Pip temp/cache
+.piptmp/
+api/.piptmp/
+
+# Deploy env files (populated secrets — keep examples, ignore actuals)
+deploy/env/api.env
+deploy/env/web.env
+deploy/env/worker.env
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+tmp/
+temp/
+
+openclaw/
+
+PAYMENT_IMPLEMENTATION_PLAN.md
+
+# Claude AI directory
+.claude/
+
+# Pitch deck & investor files
+*.pptx
+investor-deck.js
+slide4-preview.js
+rebuild_slide14.py
+landing-mockup.html
+
+# Loose image assets at root
+cadence_agent.png
+poll_agent.png
+task_agent.png
+assests/
+
+# Markdown notes (root level)
+HEALTH_CALCULATION_IMPLEMENTATION.md
+HEALTH_IMPLEMENTATION_NOTES.md
+PROJECT_HEALTH_UI_DESIGN.md
+Agent-driven-project-management.pptx
+
+# Debug/test scripts in api/
+api/check_*.py
+api/test_*.py
+api/find_*.py
+api/delete_*.py
+api/list_*.py
+api/get_*.py
+api/update_*.py
+
+# Node/package at root level (pitch deck tooling)
+node_modules/
+package.json
+package-lock.json
+
+# Misc
+temp-home-ui/
+web/app/(auth)/signup/page.tsx.bak
+SOCIAL_MEDIA_LAUNCH_PLAN.md
+
+# Sentry config files
+web/sentry.client.config.ts
+web/sentry.server.config.ts
+web/sentry.edge.config.ts
+web/instrumentation.ts
+
+# Planning/notes markdown files
+meeting-knowledge-feature.md
+plugin-build-guide.md
+todo.md
+launch-checklist.md
+bug.md
+
+# Office documents
+*.docx
+*.xlsx

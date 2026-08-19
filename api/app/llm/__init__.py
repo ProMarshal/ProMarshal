@@ -1,0 +1,67 @@
+"""Shared LLM platform contracts for cross-feature reuse."""
+
+from app.llm.gateway import (
+    LLMEmbeddingRequest,
+    LLMEmbeddingResponse,
+    LLMErrorClass,
+    LLMErrorEnvelope,
+    LLMGateway,
+    LLMGatewayRequest,
+    LLMGatewayResponse,
+    LLMHealthEvent,
+    LLMHealthEventType,
+    LLMMessage,
+    LLMMessageRole,
+    LLMToolCall,
+    LLMToolSpec,
+    LLMToolType,
+    LLMUsage,
+)
+from app.llm.telemetry import (
+    LLMTelemetryAdapter,
+    LLMTelemetryEvent,
+    LLMTelemetryEventType,
+    LLMTelemetrySeverity,
+    LoggingLLMTelemetryAdapter,
+    telemetry_event_to_dict,
+)
+from app.llm.migration_guardrails import (
+    DEFAULT_FEATURE_MIGRATION_POLICIES,
+    FeatureMigrationPolicy,
+    FeatureName,
+    OrchestrationSemantics,
+    SharedLLMPrimitive,
+    validate_migration_plan,
+)
+from app.llm.provider import get_shared_llm_gateway
+
+__all__ = [
+    "LLMErrorClass",
+    "LLMErrorEnvelope",
+    "LLMEmbeddingRequest",
+    "LLMEmbeddingResponse",
+    "LLMGateway",
+    "LLMGatewayRequest",
+    "LLMGatewayResponse",
+    "LLMHealthEvent",
+    "LLMHealthEventType",
+    "LLMMessage",
+    "LLMMessageRole",
+    "LLMToolCall",
+    "LLMToolSpec",
+    "LLMToolType",
+    "LLMUsage",
+    "LLMTelemetryAdapter",
+    "LLMTelemetryEvent",
+    "LLMTelemetryEventType",
+    "LLMTelemetrySeverity",
+    "LoggingLLMTelemetryAdapter",
+    "telemetry_event_to_dict",
+    "DEFAULT_FEATURE_MIGRATION_POLICIES",
+    "FeatureMigrationPolicy",
+    "FeatureName",
+    "OrchestrationSemantics",
+    "SharedLLMPrimitive",
+    "validate_migration_plan",
+    "get_shared_llm_gateway",
+]

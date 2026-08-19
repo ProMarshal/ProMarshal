@@ -1,0 +1,542 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+.animate-shimmer { animation: shimmer 3s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+.animate-spin-reverse { animation: spin-reverse 6s linear infinite; }
+.animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+.animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+
+/* Satoshi webfonts */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-VariableItalic.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  /* Light mode colors - clean and professional */
+  /* Soft gray background similar to coderabbit.ai */
+  --color-background: #f5f6f8;
+  --color-foreground: #0f172a;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+
+  --color-primary: #78a530;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  --color-muted: #f8fafc;
+  --color-muted-foreground: #64748b;
+
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #78a530;
+
+  --radius: 0.75rem;
+}
+
+/* Custom gradient styles */
+.gradient-hero {
+  background: linear-gradient(135deg, rgba(120, 165, 48, 0.05) 0%, rgba(120, 165, 48, 0.08) 100%);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, #78a530 0%, #78a530 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #78a530 0%, #78a530 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body {
+  font-family: "Satoshi", "Abadi", "Abadi MT", "Abadi MT Condensed", "Gill Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f6f8;
+  color: #0f172a;
+}
+
+/* ========================================
+   Topic 7: Enhanced UI/UX Styles
+   ======================================== */
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.glass-card-dark {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Marshal/AI Chat Bubble */
+.glass-bubble-marshal {
+  background: linear-gradient(135deg, rgba(120, 165, 48, 0.08) 0%, rgba(120, 165, 48, 0.12) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(120, 165, 48, 0.2);
+  border-radius: 16px;
+}
+
+/* User Chat Bubble */
+.glass-bubble-user {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(59, 130, 246, 0.10) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 16px;
+}
+
+/* Sparkle Animation for Marshal Avatar */
+.marshal-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px #78a530);
+  }
+
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 8px #78a530);
+  }
+}
+
+/* Legal pages */
+.legal-toc-link {
+  color: #94a3b8;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 4px 0;
+  display: block;
+  transition: color 0.2s;
+}
+.legal-toc-link:hover {
+  color: #78a530;
+}
+
+/* Thinking Indicator with Sparkle */
+.thinking-sparkle {
+  animation: thinking-pulse 2s ease-in-out infinite;
+}
+
+@keyframes thinking-pulse {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* Streaming Text Animation */
+.streaming-text {
+  animation: text-fade-in 0.3s ease-out forwards;
+}
+
+@keyframes text-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Draft Item Hover Lift */
+.draft-item-hover {
+  transition: all 0.2s ease;
+}
+
+.draft-item-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Panel Transitions */
+.panel-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide-in Animation for New Items */
+.slide-in-left {
+  animation: slide-in-left 0.4s ease-out forwards;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide up and hide animation - Moves completely out of view (slow) */
+.float-animation {
+  animation: slide-hide 15s ease-in-out infinite;
+}
+
+@keyframes slide-hide {
+  0%, 50% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  65% {
+    transform: translateY(-150px);
+    opacity: 0;
+  }
+
+  75% {
+    transform: translateY(-150px);
+    opacity: 0;
+  }
+
+  90%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Smooth rotating border animation - Uses conic gradient */
+.border-rotate {
+  animation: border-rotate 4s linear infinite;
+}
+
+@keyframes border-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade-shrink for Delete */
+.fade-shrink {
+  animation: fade-shrink 0.25s ease-out forwards;
+}
+
+@keyframes fade-shrink {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Confetti Burst (subtle) */
+.confetti-burst {
+  animation: confetti 0.8s ease-out forwards;
+}
+
+@keyframes confetti {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Checkmark Draw Animation */
+.checkmark-draw svg path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: checkmark-stroke 0.5s ease forwards;
+}
+
+@keyframes checkmark-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Shake Animation for Errors */
+.shake-error {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-4px);
+  }
+}
+
+/* Gap Indicator (for missing items) */
+.gap-indicator {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(251, 191, 36, 0.18) 100%);
+  border: 1px dashed rgba(251, 191, 36, 0.5);
+  border-radius: 12px;
+}
+
+/* Typing Indicator (sparkle version) */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #78a530;
+  border-radius: 50%;
+  animation: typing-bounce 1.2s infinite;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing-bounce {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* Smooth Transition for Mode Panels */
+.panel-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Input Focus Glow */
+.input-focus-glow:focus-within {
+  box-shadow: 0 0 0 3px rgba(120, 165, 48, 0.15);
+  border-color: #78a530;
+}
+
+/* Slightly darker border for chat input container */
+.chat-input-shell {
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+/* Template Card Hover */
+.template-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.template-card:hover {
+  transform: scale(1.02);
+  border-color: #78a530;
+  box-shadow: 0 8px 25px rgba(120, 165, 48, 0.15);
+}
+
+/* Success Glow */
+.success-glow {
+  animation: success-glow 1s ease-out forwards;
+}
+
+@keyframes success-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(120, 165, 48, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 20px 10px rgba(120, 165, 48, 0);
+  }
+}
+
+/* Sprint Banner Animations */
+@keyframes border-flow {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(0deg);
+  }
+
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(360deg);
+  }
+}
+
+.animate-border-flow {
+  animation: border-flow 3s linear infinite;
+}
+
+@keyframes pulse-border-green {
+
+  0%,
+  100% {
+    border-color: rgb(34 197 94);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+
+  50% {
+    border-color: rgb(22 163 74);
+    box-shadow: 0 0 20px 2px rgba(34, 197, 94, 0.3);
+  }
+}
+
+@keyframes pulse-border-amber {
+
+  0%,
+  100% {
+    border-color: rgb(245 158 11);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+
+  50% {
+    border-color: rgb(217 119 6);
+    box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.3);
+  }
+}
+
+@keyframes pulse-border-red {
+
+  0%,
+  100% {
+    border-color: rgb(239 68 68);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+
+  50% {
+    border-color: rgb(220 38 38);
+    box-shadow: 0 0 20px 2px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.animate-pulse-border-green {
+  animation: pulse-border-green 2s ease-in-out infinite;
+}
+
+.animate-pulse-border-amber {
+  animation: pulse-border-amber 2s ease-in-out infinite;
+}
+
+.animate-pulse-border-red {
+  animation: pulse-border-red 2s ease-in-out infinite;
+}
+
+/* ── Landing page: @property custom properties ── */
+@property --border-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --face-angle   { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --step-angle   { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --cap-angle    { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+/* ── Landing page: keyframes ── */
+@keyframes rotate-border     { to { --border-angle: 360deg; } }
+@keyframes rotate-face-border { to { --face-angle: 360deg; } }
+@keyframes rotate-step-border { to { --step-angle: 360deg; } }
+@keyframes rotate-cap-border  { to { --cap-angle: 360deg; } }
+@keyframes lp-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.2)} }
+@keyframes scrollBounce { 0%,100%{opacity:.5;transform:translateX(-50%) translateY(0)} 50%{opacity:1;transform:translateX(-50%) translateY(5px)} }
+@keyframes lp-typing-bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-4px);opacity:1} }
+@keyframes arrow-flow { 0%{transform:translateY(-50%) translateX(-6px)} 60%{transform:translateY(-50%) translateX(4px)} 100%{transform:translateY(-50%) translateX(0)} }
+
+/* ── Landing page: CSS variables on wrapper ── */
+.landing-page {
+  --green: #78a530;
+  --green-dark: #5e8224;
+  --green-light: #eef6e0;
+  --green-glow: rgba(120, 165, 48, 0.18);
+  --slate: #0f1117;
+  --slate2: #161b27;
+  --slate3: #1e2535;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f0f4ff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+}
+
+@keyframes hex-draw { to { stroke-dashoffset: 0; } }
+@keyframes hex-pulse { 0%, 100% { opacity: 1; } 45%, 55% { opacity: 0.05; } }

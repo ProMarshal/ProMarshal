@@ -1,0 +1,44 @@
+# ── Stage 1: builder ─────────────────────────────────────────────────────────
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagic1 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ── Stage 2: runtime ─────────────────────────────────────────────────────────
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagic1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /install /usr/local
+
+COPY . .
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DRAMATIQ_WORKER_PROCESSES=1
+ENV DRAMATIQ_WORKER_THREADS=8
+
+# Default queues — override via WORKER_QUEUES env var in compose/env file
+ENV WORKER_QUEUES="cortex_runs chat_interactions workitem_events chat_commands action_item_extraction"
+
+COPY start_worker.sh /start_worker.sh
+USER root
+RUN chmod +x /start_worker.sh
+USER appuser
+
+CMD ["/start_worker.sh"]

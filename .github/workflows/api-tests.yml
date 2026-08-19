@@ -1,0 +1,48 @@
+name: API Tests
+
+on:
+  push:
+    paths:
+      - "api/**"
+      - ".github/workflows/api-tests.yml"
+  pull_request:
+    paths:
+      - "api/**"
+      - ".github/workflows/api-tests.yml"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+
+      - name: Run decommission guard
+        working-directory: api
+        run: python -m unittest tests.test_cortex_legacy_flow_decommission
+
+      - name: Validate Cortex quality policy artifact schema
+        working-directory: api
+        run: python scripts/validate_quality_policy_artifact.py
+
+      - name: Validate runtime hardening eval corpus
+        working-directory: api
+        run: python scripts/validate_runtime_hardening_eval_corpus.py
+
+      - name: Enforce runtime hardening eval gates
+        working-directory: api
+        run: python scripts/run_runtime_hardening_eval.py
+
+      - name: Run API unit tests
+        working-directory: api
+        run: python -m unittest discover -s tests -p "test_*.py"

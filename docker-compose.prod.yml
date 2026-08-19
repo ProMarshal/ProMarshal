@@ -1,0 +1,120 @@
+# ProMarshal Production Docker Compose
+#
+# Prerequisites:
+#   - Populate deploy/env/api.env, deploy/env/web.env, deploy/env/worker.env
+#     (copy from deploy/env/*.env.example and fill in values)
+#   - Redis/Valkey: local container (defined in this compose)
+#   - MongoDB: Atlas (external – not in this compose)
+#
+# Start:
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Logs:
+#   docker compose -f docker-compose.prod.yml logs -f --tail=100
+#
+# Stop:
+#   docker compose -f docker-compose.prod.yml down
+
+services:
+
+  # Valkey (Redis-compatible broker/cache) ######################################
+  valkey:
+    image: valkey/valkey:8.1
+    container_name: promarshal-valkey
+    command:
+      - valkey-server
+      - --appendonly
+      - "yes"
+      - --maxmemory
+      - "512mb"
+      - --maxmemory-policy
+      - "allkeys-lru"
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - valkey_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "valkey-cli", "-h", "127.0.0.1", "-p", "6379", "ping"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # ── FastAPI Backend ─────────────────────────────────────────────────────────
+  api:
+    image: 803946367259.dkr.ecr.ap-south-1.amazonaws.com/promarshal-api:prod
+    container_name: promarshal-api
+    env_file:
+      - ./deploy/env/api.env
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+    depends_on:
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ── Next.js Frontend ────────────────────────────────────────────────────────
+  web:
+    image: 803946367259.dkr.ecr.ap-south-1.amazonaws.com/promarshal-web:prod
+    container_name: promarshal-web
+    env_file:
+      - ./deploy/env/web.env
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ── Dramatiq Worker ─────────────────────────────────────────────────────────
+  worker:
+    image: 803946367259.dkr.ecr.ap-south-1.amazonaws.com/promarshal-worker:prod
+    container_name: promarshal-worker
+    env_file:
+      - ./deploy/env/worker.env
+    restart: unless-stopped
+    depends_on:
+      valkey:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+  valkey_data:
+
+# REDIS_URL in api.env and worker.env should point to local Valkey:
+#   redis://valkey:6379
