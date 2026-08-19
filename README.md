@@ -1,4 +1,4 @@
-<img src="docs/PM-github.png" alt="ProMarshal - Open Source Agent Framework to build your project management assistant" width="800">
+<img src="docs/PM-github.png" alt="ProMarshal - Open Source Agent Framework to build your project management assistant" width="400">
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![API Tests](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml/badge.svg)](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml)
