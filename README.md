@@ -3,9 +3,9 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![API Tests](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml/badge.svg)](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml)
 
-**ProMarshal is an AI project management assistant that lives where your team already works — Slack and Jira — and automates the coordination work nobody wants to do.**
+**ProMarshal is an AI Executive Assistant for Project Owners** — an AI agent with project intelligence that drives your team forward from inside Slack and Jira, without anyone filling out a status report.
 
-It runs scheduled check-ins over Slack DM, extracts action items from conversation, syncs task status to Jira, and keeps a live project health view without anyone filling out a status report.
+It runs scheduled check-ins over Slack DM, extracts action items from conversation, syncs task status to Jira, and keeps a live project health view — all from where your team already works.
 
 ---
 
@@ -37,14 +37,14 @@ Full, code-verified architecture writeup: [`docs/architecture/system-architectur
 
 ## Tech Stack
 
-**Frontend:** Next.js, TypeScript, Tailwind CSS v4, NextAuth
-**Backend:** Python 3.10+, FastAPI, Motor (async MongoDB)
-**Queue/Workers:** Redis, Dramatiq
-**Database:** MongoDB
-**Auth:** Google OAuth, Email OTP
-**Integrations:** Slack API, Jira REST API (Atlassian OAuth 2.0)
-**AI:** Pluggable — OpenAI, Anthropic, Groq
-**Security:** Fernet-encrypted OAuth token storage
+- **Frontend:** Next.js, TypeScript, Tailwind CSS v4, NextAuth
+- **Backend:** Python 3.10+, FastAPI, Motor (async MongoDB)
+- **Queue/Workers:** Redis, Dramatiq
+- **Database:** MongoDB
+- **Auth:** Google OAuth, Email OTP
+- **Integrations:** Slack API, Jira REST API (Atlassian OAuth 2.0)
+- **AI:** Pluggable — OpenAI, Anthropic, Groq
+- **Security:** Fernet-encrypted OAuth token storage
 
 ## Quick Start
 
