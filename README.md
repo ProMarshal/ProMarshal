@@ -94,7 +94,26 @@ npm run dev
 
 Frontend runs on: `http://localhost:3000`
 
-### 6. Setup Google OAuth
+### 6. Scheduler / Reminders
+
+Task reminders, cadence check-ins, and team polls are not run by a built-in background scheduler — they're driven by an external trigger calling a single endpoint:
+
+```
+POST /api/cron/tick
+Authorization: Bearer <CRON_SECRET>
+```
+
+Set `CRON_SECRET` in `api/.env` (see `api/.env.example`), then trigger this endpoint periodically. For local development, a simple loop is enough:
+
+```bash
+# Every 5 minutes
+watch -n 300 curl -s -X POST http://127.0.0.1:8000/api/cron/tick \
+  -H "Authorization: Bearer <CRON_SECRET>"
+```
+
+For a self-hosted production deployment, use any external scheduler capable of an HTTP POST on an interval — a system cron job with `curl`, a Kubernetes `CronJob`, GitHub Actions `schedule` trigger, or a managed scheduler service. The tick endpoint is idempotent and safe to call concurrently (see `api/app/scheduler/engine.py` for lease/idempotency handling).
+
+### 7. Setup Google OAuth
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create OAuth 2.0 credentials
@@ -197,11 +216,11 @@ promarshal/
 
 ## 📄 License
 
-[Add your license here]
+[AGPL-3.0](./LICENSE)
 
 ## 👥 Contributors
 
-[Add contributors]
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get involved.
 
 ---
 
