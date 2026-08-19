@@ -7,16 +7,22 @@
 
 It runs scheduled check-ins over Slack DM, extracts action items from conversation, syncs task status to Jira, and keeps a live project health view — all from where your team already works.
 
+## Screenshots
+
+<!-- TODO: add product screenshots here -->
+![Dashboard](docs/screenshots/dashboard.png)
+![Slack Cadence Check-in](docs/screenshots/cadence-slack.png)
+
 ---
 
-## What it does
+## Features
 
-- **Conversational agent (Cortex)** — a Slack-native assistant that understands project context, routes requests to the right tool, and answers questions about task state, ownership, and risk.
-- **Cadence check-ins** — scheduled, agenda-based DM conversations that walk team members through their open tasks and write status updates back to Jira.
-- **Action item extraction** — pulls action items out of conversation and comments, infers owners and due dates, and tracks them to resolution.
-- **Team Poll** — lightweight async polling for status/decisions without a meeting.
-- **PM Board & Pulse** — a live, computed project health view (not a static snapshot) served from a single composed backend endpoint.
-- **Jira sync** — two-way: webhook-driven updates from Jira, and task mutations pushed back from Slack conversations.
+- **Action Agent (Cortex)** — a Slack-native conversational assistant: create/update/reassign tasks, add comments, and query project status without leaving Slack.
+- **Cadence Agent** — automated, agenda-based Slack standups that message teammates, collect responses, and sync status back to Jira.
+- **Poll Agent (Team Poll)** — instant async team polls over Slack DM, no meeting required.
+- **Action item tracking** — captures action items from conversation and comments, infers owner and due date, and follows up until resolved.
+- **Live PM Board & Pulse** — a computed, real-time project health view (not a static snapshot), served from a single composed backend endpoint.
+- **Two-way Jira sync** — webhook-driven updates from Jira, and task mutations pushed back from Slack conversations.
 
 ## Architecture
 
