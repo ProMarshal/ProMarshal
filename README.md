@@ -3,7 +3,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 [![API Tests](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml/badge.svg)](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml)
 
-**Open-Source Agentic Framework to build a Project Management Assistant** — with project intelligence that drives your team forward from inside Slack and Jira, without anyone filling out a status report.
+**Open-Source Agentic Framework to build a Project Management Assistant** — with project intelligence that drives your team forward from your communication and project management tools.
 
 🔗 [promarshal.ai](https://promarshal.ai/)
 
