@@ -106,25 +106,32 @@ git clone https://github.com/ProMarshal/ProMarshal.git
 cd ProMarshal
 ```
 
-You'll need MongoDB, Redis, a Google OAuth client, and at least one LLM provider key to run the full stack. The condensed version:
+The app **will not start** without MongoDB and Redis running first — `python run.py` connects to MongoDB on boot and fails immediately if it can't reach it. You'll also need a Google OAuth client and at least one LLM provider key before login/AI features work. Condensed version, in order:
 
 ```bash
-# Backend
+# 0. Start MongoDB and Redis first - the API will not boot without them
+docker run -d -p 27017:27017 mongo:latest
+docker run -d -p 6379:6379 redis:latest
+
+# 1. Backend (separate terminal)
 cd api && python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env   # edit with your values
+cp .env.example .env   # edit with your values - MONGODB_URI, ENCRYPTION_KEY, etc.
 python run.py
 
-# Worker (separate terminal)
+# 2. Worker (separate terminal)
+cd api && venv\Scripts\activate
 python start_dramatiq_worker.py
 
-# Frontend (separate terminal)
+# 3. Frontend (separate terminal)
 cd web && npm install
-cp .env.example .env.local   # edit with your values
+cp .env.example .env.local   # edit with your values - AUTH_SECRET, GOOGLE_CLIENT_ID, etc.
 npm run dev
 ```
 
-**For the full setup — every environment variable, Slack/Jira app registration steps, production Docker deployment, and troubleshooting — see [`docs/SETUP.md`](./docs/SETUP.md).** The condensed steps above will not get you a working instance on their own.
+**These are four separate long-running processes across four terminals** (MongoDB/Redis containers run in the background, but backend/worker/frontend each occupy their own terminal). None of this works without real config values in `.env`/`.env.local` — placeholders in the example files will not connect to anything.
+
+**For the full setup — every environment variable, Slack/Jira app registration steps, production Docker deployment, and troubleshooting — see [`docs/SETUP.md`](./docs/SETUP.md).** The condensed steps above are the minimum shape of the stack, not a copy-paste-and-done path.
 
 ## Documentation
 
