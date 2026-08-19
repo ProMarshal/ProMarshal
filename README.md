@@ -139,6 +139,7 @@ npm run dev
 |---|---|
 | [`docs/SETUP.md`](./docs/SETUP.md) | Complete setup: env vars, Google/Slack/Jira app registration, Docker deployment, troubleshooting |
 | [`docs/architecture/system-architecture.md`](./docs/architecture/system-architecture.md) | Code-verified system architecture |
+| [`docs/architecture/flows/cortex-agent-harness-flow.md`](./docs/architecture/flows/cortex-agent-harness-flow.md) | How a Cortex turn is composed: orchestrator, prompt assembly, agent harness, LLM gateway |
 | [`docs/architecture/invariants.md`](./docs/architecture/invariants.md) | Architectural invariants the codebase enforces |
 | [`docs/contracts/`](./docs/contracts/) | Subsystem contracts (Cortex, Cadence, Team Poll, project lifecycle, etc.) |
 | [`api/README.md`](./api/README.md) | Backend API reference and data model notes |
