@@ -1,228 +1,113 @@
 # ProMarshal
 
-AI-powered project management assistant that automates coordination work.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
+[![API Tests](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml/badge.svg)](https://github.com/ProMarshal/ProMarshal/actions/workflows/api-tests.yml)
 
-## 🚀 Quick Start
+**ProMarshal is an AI project management assistant that lives where your team already works — Slack and Jira — and automates the coordination work nobody wants to do.**
 
-### Prerequisites
-- Node.js 18+ (for Next.js frontend)
-- Python 3.10+ (for FastAPI backend)
-- MongoDB (local or Atlas)
-- Redis (for queues and caching)
-- Docker (recommended for Redis)
-- Google OAuth credentials
-- Slack App credentials (optional, for Slack integration)
-- Jira OAuth credentials (optional, for Jira integration)
-- Groq API key (optional, for AI-powered messages)
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/promarshal/promarshal.git
-cd promarshal
-```
-
-### 2. Start Backend
-
-```bash
-cd api
-
-# Create virtual environment
-python -m venv venv
-
-# Activate (Windows)
-venv\Scripts\activate
-# Activate (Mac/Linux)
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your MongoDB URI
-
-# Start server
-python run.py
-```
-
-Backend runs on: `http://127.0.0.1:8000`
-
-### 3. Start Redis
-
-```bash
-# Using Docker (recommended)
-docker run -d -p 6379:6379 redis:latest
-
-# Or install Redis locally
-# Mac: brew install redis && brew services start redis
-# Ubuntu: sudo apt install redis-server && sudo systemctl start redis
-```
-
-### 4. Start RQ Worker (Background Jobs)
-
-```bash
-cd api
-source venv/bin/activate
-
-# Set environment variable for macOS
-export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
-
-# Start worker
-rq worker slack_interactions jira_webhooks action_item_extraction --url redis://localhost:6379
-```
-
-Keep this terminal running for background job processing.
-
-### 5. Start Frontend
-
-```bash
-cd web
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env.local
-# Edit .env.local with:
-# - AUTH_SECRET (generate with: openssl rand -base64 32)
-# - GOOGLE_CLIENT_ID
-# - GOOGLE_CLIENT_SECRET
-
-# Start dev server
-npm run dev
-```
-
-Frontend runs on: `http://localhost:3000`
-
-### 6. Scheduler / Reminders
-
-Task reminders, cadence check-ins, and team polls are not run by a built-in background scheduler — they're driven by an external trigger calling a single endpoint:
-
-```
-POST /api/cron/tick
-Authorization: Bearer <CRON_SECRET>
-```
-
-Set `CRON_SECRET` in `api/.env` (see `api/.env.example`), then trigger this endpoint periodically. For local development, a simple loop is enough:
-
-```bash
-# Every 5 minutes
-watch -n 300 curl -s -X POST http://127.0.0.1:8000/api/cron/tick \
-  -H "Authorization: Bearer <CRON_SECRET>"
-```
-
-For a self-hosted production deployment, use any external scheduler capable of an HTTP POST on an interval — a system cron job with `curl`, a Kubernetes `CronJob`, GitHub Actions `schedule` trigger, or a managed scheduler service. The tick endpoint is idempotent and safe to call concurrently (see `api/app/scheduler/engine.py` for lease/idempotency handling).
-
-### 7. Setup Google OAuth
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create OAuth 2.0 credentials
-3. Add redirect URI: `http://localhost:3000/api/auth/callback/google`
-4. Copy Client ID and Secret to `.env.local`
-
-## 📚 Documentation
-
-- **[CLAUDE.md](./CLAUDE.md)** - Complete project context and implementation status
-- **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Detailed folder structure
-- **[api/README.md](./api/README.md)** - Backend API documentation
-
-## 🎨 Current Features
-
-### Core Platform
-✅ Landing page with professional design
-✅ Google OAuth authentication
-✅ Dashboard with project management
-✅ Create project modal flow
-✅ MongoDB data persistence
-✅ FastAPI backend with CRUD operations
-
-### Integrations (Fully Implemented)
-✅ **Slack OAuth Integration** - Connect workspace, send messages, interactive buttons
-✅ **Jira OAuth Integration** - Sync tasks, update status, add comments
-✅ **Jira Webhooks** - Real-time task updates from Jira to ProMarshal DB
-
-### Task Reminders System
-✅ **Free Tier** - Simple daily task reminders via Slack DM
-✅ **Paid Tier** - Interactive task updates with buttons and modals
-✅ **Cron Scheduler** - Automated daily reminders at configured time
-✅ **Session Management** - Track user progress through tasks
-✅ **Jira Sync** - Update Jira tasks directly from Slack
-
-### Infrastructure
-✅ **Redis Queue (RQ)** - Background job processing for webhooks
-✅ **Groq LLM Integration** - AI-powered conversational messages (optional)
-✅ **Encryption** - Secure storage of OAuth tokens
-
-## 🛠️ Tech Stack
-
-**Frontend:** Next.js 16, TypeScript, Tailwind CSS v4, NextAuth v5
-**Backend:** Python 3.10+, FastAPI, Motor (async MongoDB)
-**Database:** MongoDB
-**Queue:** Redis, RQ (Python-RQ)
-**Auth:** Google OAuth 2.0, Slack OAuth, Jira OAuth
-**AI:** Groq LLM (conversational messages)
-**Integrations:** Slack API, Jira REST API
-**Security:** Fernet encryption for tokens
-
-## 📂 Project Structure
-
-```
-promarshal/
-├── web/          # Next.js frontend
-├── api/          # Python FastAPI backend
-├── CLAUDE.md     # Project documentation
-└── README.md     # This file
-```
-
-## 🔗 API Endpoints
-
-**Users:**
-- `POST /api/users/` - Create user
-- `GET /api/users/email/{email}` - Get by email
-- `GET /api/users/{user_id}` - Get by ID
-
-**Projects:**
-- `POST /api/projects/` - Create project
-- `GET /api/projects?user_id={id}` - List user's projects
-- `GET /api/projects/{project_id}` - Get by ID
-
-**Integrations:**
-- `GET /api/integrations/slack/connect` - Initiate Slack OAuth
-- `GET /api/integrations/slack/callback` - Slack OAuth callback
-- `DELETE /api/integrations/slack/disconnect` - Disconnect Slack
-- `GET /api/integrations/jira/connect` - Initiate Jira OAuth
-- `GET /api/integrations/jira/callback` - Jira OAuth callback
-- `DELETE /api/integrations/jira/disconnect` - Disconnect Jira
-
-**Task Reminders (Webhooks):**
-- `POST /api/integrations/slack/interactions` - Handle Slack button clicks & modals
-
-**Jira Webhooks:**
-- `POST /api/jira/webhooks/task-updated` - Receive Jira task updates
-
-**Docs:** `http://localhost:8000/docs`
-
-## 🎯 Next Steps
-
-- [ ] Meeting transcription and action item extraction (Google Meet integration)
-- [ ] Email integration for communication tracking
-- [ ] AI-powered project insights and recommendations
-- [ ] Advanced team member management and permissions
-- [ ] ClickUp integration
-- [ ] Linear integration
-- [ ] Notion integration
-- [ ] Project knowledge base / memory system
-- [ ] Analytics dashboard
-
-## 📄 License
-
-[AGPL-3.0](./LICENSE)
-
-## 👥 Contributors
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get involved.
+It runs scheduled check-ins over Slack DM, extracts action items from conversation, syncs task status to Jira, and keeps a live project health view without anyone filling out a status report.
 
 ---
 
-**Current Status:** MVP Phase 2 Complete ✅
-**Live Features:** Slack Integration, Jira Integration, Task Reminders (Free & Paid Tier)
+## What it does
+
+- **Conversational agent (Cortex)** — a Slack-native assistant that understands project context, routes requests to the right tool, and answers questions about task state, ownership, and risk.
+- **Cadence check-ins** — scheduled, agenda-based DM conversations that walk team members through their open tasks and write status updates back to Jira.
+- **Action item extraction** — pulls action items out of conversation and comments, infers owners and due dates, and tracks them to resolution.
+- **Team Poll** — lightweight async polling for status/decisions without a meeting.
+- **PM Board & Pulse** — a live, computed project health view (not a static snapshot) served from a single composed backend endpoint.
+- **Jira sync** — two-way: webhook-driven updates from Jira, and task mutations pushed back from Slack conversations.
+
+## Architecture
+
+```
+web (Next.js)  --->  api (FastAPI)  --->  MongoDB
+                          |
+                          v
+                       Redis  <---  worker (Dramatiq)
+```
+
+- **web/** — Next.js (App Router) frontend, NextAuth-based session handling
+- **api/** — FastAPI backend; owns integrations, the agent runtime (`cortex/`, `planner/`, `cadence/`), and the scheduler
+- **worker** — Dramatiq background worker for queued jobs (Slack/Jira events, agent runs, extraction)
+- **MongoDB** — system of record, plus a per-project "Brain" collection for tasks/sessions
+- **Redis** — queue backend, caching, and Cortex/Slack ingress locking
+
+Full, code-verified architecture writeup: [`docs/architecture/system-architecture.md`](./docs/architecture/system-architecture.md).
+
+## Tech Stack
+
+**Frontend:** Next.js, TypeScript, Tailwind CSS v4, NextAuth
+**Backend:** Python 3.10+, FastAPI, Motor (async MongoDB)
+**Queue/Workers:** Redis, Dramatiq
+**Database:** MongoDB
+**Auth:** Google OAuth, Email OTP
+**Integrations:** Slack API, Jira REST API (Atlassian OAuth 2.0)
+**AI:** Pluggable — OpenAI, Anthropic, Groq
+**Security:** Fernet-encrypted OAuth token storage
+
+## Quick Start
+
+```bash
+git clone https://github.com/ProMarshal/ProMarshal.git
+cd ProMarshal
+```
+
+You'll need MongoDB, Redis, a Google OAuth client, and at least one LLM provider key to run the full stack. The condensed version:
+
+```bash
+# Backend
+cd api && python -m venv venv && venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env   # edit with your values
+python run.py
+
+# Worker (separate terminal)
+python start_dramatiq_worker.py
+
+# Frontend (separate terminal)
+cd web && npm install
+cp .env.example .env.local   # edit with your values
+npm run dev
+```
+
+**For the full setup — every environment variable, Slack/Jira app registration steps, production Docker deployment, and troubleshooting — see [`docs/SETUP.md`](./docs/SETUP.md).** The condensed steps above will not get you a working instance on their own.
+
+## Documentation
+
+| Doc | Covers |
+|---|---|
+| [`docs/SETUP.md`](./docs/SETUP.md) | Complete setup: env vars, Google/Slack/Jira app registration, Docker deployment, troubleshooting |
+| [`docs/architecture/system-architecture.md`](./docs/architecture/system-architecture.md) | Code-verified system architecture |
+| [`docs/architecture/invariants.md`](./docs/architecture/invariants.md) | Architectural invariants the codebase enforces |
+| [`docs/contracts/`](./docs/contracts/) | Subsystem contracts (Cortex, Cadence, Team Poll, project lifecycle, etc.) |
+| [`api/README.md`](./api/README.md) | Backend API reference and data model notes |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md) | How to contribute |
+| [`SECURITY.md`](./SECURITY.md) | Vulnerability reporting |
+
+## API Overview
+
+Interactive API docs are available at `http://localhost:8000/docs` when running locally (disabled in production). A few key endpoints:
+
+- `POST /api/projects/` · `GET /api/projects?user_id={id}` — project CRUD
+- `GET /api/integrations/slack/connect` / `GET /api/integrations/jira/connect` — integration OAuth flows
+- `POST /api/integrations/slack/events` — Slack event ingress (Cortex handoff)
+- `POST /api/jira/webhooks/{project_id}/task-updated` — Jira → Brain sync
+- `POST /api/cron/tick` — scheduler trigger (reminders, cadence, team polls — see [`docs/SETUP.md`](./docs/SETUP.md#7-scheduler--reminders-trigger))
+
+## Roadmap
+
+- [ ] Meeting transcription and action item extraction (Google Meet)
+- [ ] Email integration for communication tracking
+- [ ] AI-powered project insights and recommendations
+- [ ] ClickUp, Linear, Notion integrations
+- [ ] Project knowledge base / memory system
+- [ ] Analytics dashboard
+
+## Contributing
+
+Contributions are welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md) for local setup, coding standards ([`RULES.md`](./RULES.md)), and how to open a PR.
+
+## License
+
+[AGPL-3.0](./LICENSE)
