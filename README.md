@@ -5,6 +5,8 @@
 
 **ProMarshal is an AI Executive Assistant for Project Owners** — an AI agent with project intelligence that drives your team forward from inside Slack and Jira, without anyone filling out a status report.
 
+🔗 [promarshal.ai](https://promarshal.ai/)
+
 It runs scheduled check-ins over Slack DM, extracts action items from conversation, syncs task status to Jira, and keeps a live project health view — all from where your team already works.
 
 ---
