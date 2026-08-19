@@ -137,6 +137,11 @@ Tick lifecycle:
 - This is the extension point for adding provider/tool capability surfaces.
 - Shared LLM gateway contracts now include embedding operations, used by Team Poll pending-relevance evaluation.
 
+## 3.4 Cortex agent harness
+
+How a single Cortex turn is composed internally — orchestrator, prompt assembly, the shared agent runtime (agent harness) tool-calling loop, and the LLM gateway:
+- `docs/architecture/flows/cortex-agent-harness-flow.md`
+
 ## 4) PM Board + Pulse Architecture (Detailed)
 
 ## 4.1 Single backend composition path

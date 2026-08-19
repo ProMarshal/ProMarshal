@@ -36,6 +36,6 @@ Do not proceed with implementation if these artifacts are missing or contradicto
 
 ## Quick Reference
 
-- Start backend: `cd api && uvicorn app.main:app --reload --port 8000`
+- Start backend: `cd api && python run.py`
 - Start frontend: `cd web && npm run dev`
-- Start worker: `cd api && rq worker slack_interactions jira_webhooks action_item_extraction`
+- Start worker: `cd api && python start_dramatiq_worker.py`
