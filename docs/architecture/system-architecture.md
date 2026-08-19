@@ -137,6 +137,67 @@ Tick lifecycle:
 - This is the extension point for adding provider/tool capability surfaces.
 - Shared LLM gateway contracts now include embedding operations, used by Team Poll pending-relevance evaluation.
 
+## 3.4 Cortex Agent Component Architecture
+
+How a single Cortex turn is composed internally — orchestrator, prompt assembly, the shared agent runtime's tool-calling loop, and the LLM gateway — verified against imports in `api/app/cortex/orchestrator.py`, `api/app/cortex/prompt_builder.py`, `api/app/agent_runtime/*`, and `api/app/llm/*`.
+
+```mermaid
+graph TB
+    Worker["cortex/worker.py\n(dequeues cortex_runs job)"]
+    Orchestrator["CortexOrchestrator\norchestrator.py"]
+
+    subgraph PA["Prompt Assembly"]
+        PromptBuilder["CortexPromptBuilder\nprompt_builder.py"]
+        PromptRegistry["promarshal/prompt_registry\ncore identity, scope policy, overlays"]
+        Policies["cortex/policies\npersona, response_rules, roles, tool policies"]
+        Capabilities["domain/capabilities\ncapability context"]
+    end
+
+    subgraph EL["Execution Loop"]
+        Runtime["shared_agent_runtime\nagent_runtime/runtime.py"]
+        Executor["AgentExecutor\nagent_runtime/executor.py"]
+        Permissions["CortexPermissionService\npermissions.py"]
+        Quality["QualityEngine\ncortex/quality/"]
+        ToolRegistry["CortexToolRegistry"]
+        Tools["CortexTool implementations\nJira, tasks, brain, etc."]
+    end
+
+    subgraph LG["LLM Gateway"]
+        GatewayProvider["gateway_model_provider.py"]
+        Gateway["LLM Gateway contract\napp/llm/gateway.py"]
+        LiteLLM["LiteLLM Gateway\nlitellm_gateway.py"]
+        Providers[["OpenAI / Anthropic / Groq"]]
+    end
+
+    ResponseGuard["CortexResponseGuard\nresponse_guard.py"]
+
+    Worker --> Orchestrator
+    Orchestrator --> PromptBuilder
+    PromptBuilder --> PromptRegistry
+    PromptBuilder --> Policies
+    PromptBuilder --> Capabilities
+    Orchestrator --> Runtime
+    Runtime --> Executor
+    Executor --> Permissions
+    Executor --> Quality
+    Executor --> ToolRegistry
+    ToolRegistry --> Tools
+    Tools -->|Jira API, Brain DB reads/writes| External[("Jira / MongoDB")]
+    Executor --> GatewayProvider
+    GatewayProvider --> Gateway
+    Gateway --> LiteLLM
+    LiteLLM --> Providers
+    Executor --> Orchestrator
+    Orchestrator --> ResponseGuard
+    ResponseGuard --> Out(["Response back to Slack"])
+```
+
+Key points:
+- The **LLM Gateway** (`app/llm/gateway.py`) is a provider-agnostic contract; `litellm_gateway.py` is the concrete implementation routing to OpenAI/Anthropic/Groq via LiteLLM. `agent_runtime/gateway_model_provider.py` is the adapter that lets the executor's tool-calling loop speak to the gateway without depending on a specific provider.
+- **Prompt assembly is layered**: `promarshal/prompt_registry` holds the base identity/scope/response-rules text and per-feature overlays; `cortex/policies/` holds persona, role, and per-tool policy markdown. `CortexPromptBuilder` composes both plus live capability context into the final system prompt for a turn.
+- **The execution loop is shared**, not Cortex-specific — `agent_runtime/runtime.py` and `executor.py` are also used by Cadence's agent runtime bindings (see [3.2](#32-shared-agent-runtime)).
+- **`CortexResponseGuard`** is the last gate before a response leaves the orchestrator — separate from `QualityEngine`, which gates operations mid-execution inside the tool-calling loop.
+
 ## 4) PM Board + Pulse Architecture (Detailed)
 
 ## 4.1 Single backend composition path
